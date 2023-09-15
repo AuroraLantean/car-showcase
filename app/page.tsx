@@ -1,11 +1,22 @@
-import { CustomFilter, SearchBar } from '@/components'
-import Hero from '@/components/Hero'
-import { fuels, yearsOfProduction } from '@/constants'
-import Image from 'next/image'
+import { fetchCars } from "@/utils";
+import { HomeProps } from "@/types";
+import { fuels, yearsOfProduction } from "@/constants";
+import { CarCard, SearchBar, CustomFilter, Hero } from "@/components";//ShowMore,
 
-export default function Home() {
+export default async function Home({ searchParams }: HomeProps) {
+  const allCars = await fetchCars({
+    manufacturer: searchParams.manufacturer || "",
+    year: searchParams.year || 2022,
+    fuel: searchParams.fuel || "",
+    limit: searchParams.limit || 10,
+    model: searchParams.model || "",
+  });
+  console.log("allCars:", allCars[0])
+
+  const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
+
   return (
-    <main className="overflow-hidden">
+    <main className='overflow-hidden'>
       <Hero />
 
       <div className='mt-12 padding-x padding-y max-width' id='discover'>
@@ -23,24 +34,15 @@ export default function Home() {
           </div>
         </div>
 
-
-      </div>
-    </main>
-  )
-}
-/**
         {!isDataEmpty ? (
           <section>
             <div className='home__cars-wrapper'>
               {allCars?.map((car) => (
-                <CarCard car={car} />
+                <CarCard key={JSON.stringify(car)} car={car} />
               ))}
             </div>
 
-            <ShowMore
-              pageNumber={(searchParams.limit || 10) / 10}
-              isNext={(searchParams.limit || 10) > allCars.length}
-            />
+
           </section>
         ) : (
           <div className='home__error-container'>
@@ -48,4 +50,13 @@ export default function Home() {
             <p>{allCars?.message}</p>
           </div>
         )}
+      </div>
+    </main>
+  );
+}
+/**
+            <ShowMore
+              pageNumber={(searchParams.limit || 10) / 10}
+              isNext={(searchParams.limit || 10) > allCars.length}
+            />
  */

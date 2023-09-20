@@ -6,6 +6,7 @@ import CustomButton from './CustomButton'
 
 const Hero = () => {
   const handleScroll = () => {
+    console.log("handleScroll")
     const nextSection = document.getElementById("discover");
 
     if (nextSection) {
